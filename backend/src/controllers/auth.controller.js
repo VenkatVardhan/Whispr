@@ -30,11 +30,11 @@ export const signup = async (req, res) => {
       generateToken(newUser._id, res)
       await newUser.save()
       res.status(201).json({
-        userId: newUser._id,
+        _id: newUser._id,
         fullName: newUser.fullName,
         email: newUser.email,
-        password: newUser.password,
         profilePic: newUser.profilePic,
+        createdAt:newUser.createdAt,
       })
     } else {
       return res.status(400).json({ message: 'Invalid User Data' })
@@ -61,11 +61,13 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid Credentials' })
     }
     generateToken(user._id, res)
+
     res.status(200).json({
-      userId: user._id,
+      _id: user._id,
       fullName: user.fullName,
       email: user.email,
       profilePic: user.profilePic,
+      createdAt:user.createdAt
     })
   } catch (error) {
     console.log('error in log in controller' + error.message)
@@ -82,23 +84,24 @@ export const logout = (req, res) => {
   }
 }
 export const updateProfile = async (req, res) => {
-  const { profilePic } = req.body
-  const userId = req.user._id
   try {
+    const { profilePic } = req.body
+    const userId = req.user._id
+
     if (!profilePic) {
       return res.status(400).json({ message: 'Profile  Pic Required' })
     }
 
-    const uploadResponse = cloudinary.uploader.upload(profilePic)
-    const updatedUser = await userModel.findByIdAndUpdate(
-      userId,
-      { profilePic: uploadResponse.secure_url },
-      { new: true }
-    )
-    if (!updatedUser) {
-      return res.status(400).json({ message: '' })
-    }
-    res.status(200).json({ message: 'profile pic updated' })
+    const uploadResponse = await cloudinary.uploader.upload(profilePic)
+    const updatedUser = await userModel
+      .findByIdAndUpdate(
+        userId,
+        { profilePic: uploadResponse.secure_url },
+        { new: true }
+      )
+      .select('-password')
+
+    res.status(200).json(updatedUser )
   } catch (error) {
     console.log('error in updateProfile controller')
     return res.status(500).json({ message: 'Internal Server Error' })

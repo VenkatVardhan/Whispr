@@ -18,6 +18,7 @@ export const protectRoute = async (req, res,next) => {
 
         }
         req.user=user
+        console.log("protectRoute is called and returned ",user)
         next()
 
     } catch (error) {

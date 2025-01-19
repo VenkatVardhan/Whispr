@@ -4,19 +4,19 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
 
-const authStore =(set)=>({
+const authStore =(set,get)=>({
     authUser:null,
     isSigningUp:false,
     isLoggingIn:false,
     isUpdatingProfile:false,
     isCheckingAuth:true,
+    onlineUsers:[],
 
-    checkAuth:async ()=>{
+    checkAuth:async (state)=>{
         try {
             const res = await axiosInstance.get("/auth/check")
-            set({
-                authUser:res.data
-            })
+            set({authUser:res.data})
+            console.log("after checkAuth response is ",res.data,"and authUser id ",get().authUser)
             
             
         } catch (error) {
@@ -71,6 +71,24 @@ const authStore =(set)=>({
         }
         finally{
             set({isLoggingIn:false})
+        }
+    },
+    updateProfile:async(data)=>{
+        set({isUpdatingProfile:true})
+        try {
+            const res = await axiosInstance.put("/auth/update-profile",data)
+            set({ authUser: res.data })
+            console.log(res)
+            toast.success("Profile updated successfully")
+
+            
+        } catch (error) {
+            console.log("Error In updateProfile action",error)
+            toast.error(error.response.data.message)
+            
+        }
+        finally{
+            set({isUpdatingProfile:false})
         }
     }
 
