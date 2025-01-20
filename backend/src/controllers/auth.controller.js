@@ -100,8 +100,8 @@ export const updateProfile = async (req, res) => {
         { new: true }
       )
       .select('-password')
-
-    res.status(200).json(updatedUser )
+      console.log("result from updateProfile controller",updatedUser)
+    res.status(200).json(updatedUser)
   } catch (error) {
     console.log('error in updateProfile controller')
     return res.status(500).json({ message: 'Internal Server Error' })

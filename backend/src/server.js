@@ -6,8 +6,9 @@ import cookieParser from "cookie-parser"
 import cors from "cors"
 dotenv.config()
 import { connectDB } from "./db/db.connect.js"
+import {io,app,server} from "./utils/socket.io.js"
 
-const app=express()
+
 
 const PORT=process.env.PORT ||5002
 app.use(express.json())
@@ -19,7 +20,7 @@ app.use(cors({
 app.use("/api/auth",authRouter);
 app.use("/api/messages",messageRouter)
 
-app.listen(PORT,()=>{
+server.listen(PORT,()=>{
     console.log(`Server started at port ${PORT}`)
 
 
