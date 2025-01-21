@@ -4,7 +4,7 @@ import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
 
 import {io} from "socket.io-client"
-const BASE_URL ="http://localhost:5001"
+const BASE_URL =import.meta.env.MODE === 'development' ? 'http://localhost:5001' : '/'
 const authStore =(set,get)=>({
     authUser:null,
     isSigningUp:false,
@@ -109,14 +109,14 @@ const authStore =(set,get)=>({
             socket.on("getOnlineUsers",(userIds)=>{
                 set({onlineUsers:userIds})
             })
-            console.log("user connected",socket?.id)
+
             set({socket})
         },
         disconnectSocket:()=>{
             const id  =get().socket?.id
             if(get().socket?.connected){
                 get().socket.disconnect()
-                console.log("user disconnected ",id)
+
             }
         }
 

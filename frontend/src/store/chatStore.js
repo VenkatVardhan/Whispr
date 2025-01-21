@@ -62,7 +62,6 @@ const chatStore = (set,get) => ({
       if(newMessage.senderId!==selectedUser._id) return //check isMessage sent from selected user
       console.log("socket responded to newMessage")
       set({messages:[...get().messages,newMessage]})
-      console.log(get().messages)
     })
 
     socket.on("newMessage")
